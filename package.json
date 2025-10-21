@@ -2,8 +2,5 @@
   "name": "yt-dlp-api",
   "version": "1.0.0",
   "main": "api/download.js",
-  "type": "module",
-  "dependencies": {
-    "yt-dlp-exec": "^2.1.4"
-  }
+  "type": "module"
 }
