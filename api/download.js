@@ -1,35 +1,24 @@
-import { exec } from 'child_process';
-import util from 'util';
-
-const execPromise = util.promisify(exec);
-
 export default async function handler(req, res) {
   const url = req.query.url;
+
   if (!url) {
-    return res.status(400).json({ error: "Missing 'url' query parameter" });
+    return res.status(400).json({ error: "Missing ?url parameter" });
   }
 
   try {
-    // Download video info (no file storage)
-    const cmd = `yt-dlp -j "${url}"`;
-    const { stdout } = await execPromise(cmd);
-    const info = JSON.parse(stdout);
+    // Using a public yt-dlp endpoint
+    const api = `https://api.tomp3.cc/api/v1/convert?url=${encodeURIComponent(url)}`;
+    const response = await fetch(api);
+    const data = await response.json();
 
-    // Get best format URL
-    const videoUrl = info.url || (info.formats?.pop()?.url ?? null);
-
-    if (!videoUrl) {
-      throw new Error("Could not extract download URL");
-    }
-
-    res.status(200).json({
-      status: "ok",
-      title: info.title,
-      uploader: info.uploader,
-      url: videoUrl,
-      duration: info.duration,
+    return res.status(200).json({
+      title: data.title,
+      download: data.link,
+      thumbnail: data.thumbnail,
     });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 }
