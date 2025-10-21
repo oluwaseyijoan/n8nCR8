@@ -4,6 +4,6 @@
   "main": "api/download.js",
   "type": "module",
   "dependencies": {
-    "yt-dlp-exec": "^3.0.0"
+    "yt-dlp-exec": "^2.1.4"
   }
 }
